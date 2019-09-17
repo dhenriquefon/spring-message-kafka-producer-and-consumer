@@ -1,26 +1,57 @@
 # spring-message-kafka-producer-and-consumer
 exemplo simples de produzir e escrever mensagens no KAFKA (sem schema registry)
 
-First, install confluent platform:
-https://docs.confluent.io/current/quickstart/ce-quickstart.html?_ga=2.164882175.1581225892.1568655608-766627929.1567455964#ce-quickstart
+First, install and configure  apache kafka:
 
-======================================
-confluent local stop
+http://kafka.apache.org/quickstart
+steps:
+===========================
+start do kafka
+================
+bin/zookeeper-server-start.sh config/zookeeper.properties
+bin/kafka-server-start.sh config/server.properties -> kafka startado em um noh setado nesse arquivo de configuracao
+================
  
-confluent local start
+criando um topico
+===============
+bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic test
+===============
  
-confluent local status
-    The local commands are intended for a single-node development environment
-    only, NOT for production usage. https://docs.confluent.io/current/cli/index.html
+listando topico
+===============
+bin/kafka-topics.sh --list --bootstrap-server localhost:9092
+===============
  
-control-center is [UP]
-ksql-server is [UP]
-connect is [UP]
-kafka-rest is [UP]
-schema-registry is [UP]
-kafka is [UP]
-zookeeper is [UP]
-======================================
+enviando mensagem (producer)
+===============
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
+ 
+teste mensagem 1
+teste mensagem 2
+===============
+ 
+consumindo mensagem (consumer)
+===============
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
+===============
+ 
+configurar multiplos cluester
+==============
+criar novos arquivos de configuracao
+ 
+cp config/server.properties config/server-1.properties
+ 
+config/server-1.properties:
+    broker.id=1
+    listeners=PLAINTEXT://:9093
+    log.dirs=/tmp/kafka-logs-1
+==============
+ 
+criando kafka connector standalone
+==============
+bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties config/connect-file-sink.properties
+=============
+===========================
 
 COMMAND TO BUILD APPLICATION
 ======================================
